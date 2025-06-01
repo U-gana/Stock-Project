@@ -17,7 +17,7 @@ df = df[df['Cleaned_Text'].notna()]  # Remove NaNs
 df = df[df['Cleaned_Text'].str.strip() != '']  # Remove empty strings or whitespace
 
 # Creatin a Dataframe containing important features for price prediction
-trade_df = df[["Date","Close","Adj Close", "Close","High","Low", "Open","Volume", "Company","Sentiment"]]
+trade_df = df[["Date","Close","Adj Close", "High","Low", "Open","Volume", "Company","Sentiment"]]
 
 trade_df.index = pd.to_datetime(trade_df["Date"])
 
