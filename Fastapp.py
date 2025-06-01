@@ -20,7 +20,7 @@ class PredictionInput(BaseModel):
     low: float
     volume: float
     Adj_Close:float
-    Company:int
+    Company:str
     Sentiment:int
     # Add any other features needed for price prediction
 
