@@ -20,17 +20,26 @@ class PredictionInput(BaseModel):
     low: float
     volume: float
     Adj_Close:float
-    Company:str
+    Company:int
     Sentiment:int
     # Add any other features needed for price prediction
+@app.on_event("startup")
+def load_model():
+    global model
+    model = joblib.load("text_classifier.pkl")
 
+# Define a prediction endpoint
+@app.post("/predict")
+def predict(input: PredictionInput):
+    # Perform prediction
+    prediction = model.predict([input.text])
+    return {"text": input.text, "prediction": prediction[0]}
 @app.post("/predict")
 def predict(data: PredictionInput):
-    # Step 1: Get sentiment
-    sentiment = sentiment_model.predict([data.text])[0]
+   
 
     # Step 2: Construct features for price model (example)
-    features = [[data.Close, data.Adj_Close,data.high, data.low,data.open, data.volume,data.Company, sentiment  ]]
+    features = [[data.Close, data.Adj_Close,data.high, data.low,data.open, data.volume,data.Company, data.Sentiment  ]]
 
     # Step 3: Predict price
     predicted_price = price_model.predict(features)
