@@ -1,62 +1,47 @@
-import pandas as pd
-import numpy as np
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from pydantic import BaseModel
 import joblib
+import pandas as pd
 
-# Load your models
-sentiment_model = joblib.load("sentiment_Model.pkl")  # e.g., sklearn pipeline
-price_model = joblib.load("price_predictor.pkl")          # e.g., RandomForestRegressor
+# Load models
+sentiment_model = joblib.load("sentiment_Model.pkl")
+price_model = joblib.load("price_predictor.pkl")
+
+# Define input schema
+class PredictionInput(BaseModel):
+    text: str
+    open: float
+    high: float
+    low: float
+    close: float
+    adj_close: float
+    volume: float
+    company: str  # company name as string
 
 # Create FastAPI app
 app = FastAPI()
-# Define the input data structure
-class TextInput(BaseModel):
-    text: str
-
-# Initialize FastAPI app
-app = FastAPI()
-
-# Load the model at startup 
-model = None
-
-@app.on_event("startup")
-def load_model():
-    global model
-    model = joblib.load("sentiment_Model.pkl")
-
-# Define a prediction endpoint
-@app.post("/predict")
-def predict(input: TextInput):
-    # Perform prediction
-    prediction = model.predict([input.text])
-    return {"text": input.text, "prediction": prediction[0]}
-# Define input structure
-class PredictionInput(BaseModel):
-    
-    open: float
-    high: float
-    Close:float
-    low: float
-    volume: float
-    Adj_Close:float
-    Company:int
-    Sentiment:int
-    # Add any other features needed for price prediction
-
-
 
 @app.post("/predict")
 def predict(data: PredictionInput):
-   
+    # Step 1: Predict Sentiment
+    sentiment = sentiment_model.predict([data.text])[0]
 
-    # Step 2: Construct features for price model (example)
-    features = [[data.Close, data.Adj_Close,data.high, data.low,data.open, data.volume,data.Company, data.Sentiment  ]]
+    # Step 2: Prepare data for price prediction
+    input_df = pd.DataFrame([{
+        "Close": data.close,
+        "Adj Close": data.adj_close,
+        "High": data.high,
+        "Low": data.low,
+        "Open": data.open,
+        "Volume": data.volume,
+        "Company": data.company,
+        "Sentiment": sentiment
+    }])
 
     # Step 3: Predict price
-    predicted_price = price_model.predict(features)
+    predicted_price = price_model.predict(input_df)[0]
 
     return {
-    
-        "predicted_price": predicted_price
+        "predicted_sentiment": int(sentiment),
+        "predicted_next_close_price": predicted_price
     }
