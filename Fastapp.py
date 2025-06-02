@@ -10,7 +10,27 @@ price_model = joblib.load("price_predictor.pkl")          # e.g., RandomForestRe
 
 # Create FastAPI app
 app = FastAPI()
+# Define the input data structure
+class TextInput(BaseModel):
+    text: str
 
+# Initialize FastAPI app
+app = FastAPI()
+
+# Load the model at startup 
+model = None
+
+@app.on_event("startup")
+def load_model():
+    global model
+    model = joblib.load("sentiment_Model.pkl")
+
+# Define a prediction endpoint
+@app.post("/predict")
+def predict(input: TextInput):
+    # Perform prediction
+    prediction = model.predict([input.text])
+    return {"text": input.text, "prediction": prediction[0]}
 # Define input structure
 class PredictionInput(BaseModel):
     text: str
@@ -25,12 +45,7 @@ class PredictionInput(BaseModel):
     # Add any other features needed for price prediction
 
 
-# Define a prediction endpoint
-@app.post("/predict")
-def predict(input: PredictionInput):
-    # Perform prediction
-    prediction = sentiment_model.predict([input.text])
-    return {"text": input.text, "prediction": prediction[0]}
+
 @app.post("/predict")
 def predict(data: PredictionInput):
    
