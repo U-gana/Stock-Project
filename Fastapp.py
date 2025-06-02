@@ -29,7 +29,7 @@ class PredictionInput(BaseModel):
 @app.post("/predict")
 def predict(input: PredictionInput):
     # Perform prediction
-    prediction = model.predict([input.text])
+    prediction = sentiment_model.predict([input.text])
     return {"text": input.text, "prediction": prediction[0]}
 @app.post("/predict")
 def predict(data: PredictionInput):
