@@ -33,7 +33,7 @@ def predict(input: TextInput):
     return {"text": input.text, "prediction": prediction[0]}
 # Define input structure
 class PredictionInput(BaseModel):
-    text: str
+    
     open: float
     high: float
     Close:float
