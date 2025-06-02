@@ -23,10 +23,7 @@ class PredictionInput(BaseModel):
     Company:int
     Sentiment:int
     # Add any other features needed for price prediction
-@app.on_event("startup")
-def load_model():
-    global model
-    model = joblib.load("sentiment_Model.pkl")
+
 
 # Define a prediction endpoint
 @app.post("/predict")
