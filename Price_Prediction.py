@@ -32,7 +32,7 @@ preprocessor = ColumnTransformer(transformers=[
 model  = Pipeline([("preprocessor", preprocessor),("clf", LinearRegression())])
 
 # inotialising features and target values 
-x = trade_df
+x = trade_df.drop("Date", axis=1)
 x = x.iloc[:-1]
 
 y = trade_df['Close'].shift(-1)
