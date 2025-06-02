@@ -26,7 +26,7 @@ class PredictionInput(BaseModel):
 @app.on_event("startup")
 def load_model():
     global model
-    model = joblib.load("text_classifier.pkl")
+    model = joblib.load("sentiment_Model.pkl")
 
 # Define a prediction endpoint
 @app.post("/predict")
