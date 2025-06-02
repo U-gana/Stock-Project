@@ -45,6 +45,6 @@ def predict(data: PredictionInput):
     predicted_price = price_model.predict(features)
 
     return {
-        "sentiment": sentiment,
+    
         "predicted_price": predicted_price
     }
